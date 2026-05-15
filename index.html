@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joshimath-Badrinath Darshan | Dev Bhai</title>
+    <style>
+        :root { --kesariya: #FF8C00; --gold: #FFD700; --white: #ffffff; }
+        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; background: #000; overflow-x: hidden; }
+        
+        .page { min-height: 100vh; width: 100%; background-size: cover; background-position: center; background-attachment: fixed; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; text-align: center; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1; }
+        .content { position: relative; z-index: 10; width: 90%; max-width: 600px; padding: 20px 0; }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .transport-note { background: rgba(255, 0, 0, 0.2); color: #ffcccc; padding: 8px; font-size: 13px; border-radius: 5px; margin-bottom: 15px; border: 1px solid red; }
+
+        input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px; box-sizing: border-box; text-align: center; }
+        
+        .btn-main { background: linear-gradient(45deg, var(--kesariya), #ff4500); color: white; border: none; padding: 15px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; transition: 0.3s; font-size: 1.1em; }
+        .btn-share { background: #25D366; color: white; border: none; padding: 12px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; margin-top: 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.1em; width: 100%; box-sizing: border-box; }
+        
+        .pkg-card { background: rgba(0,0,0,0.6); border: 1px solid var(--gold); border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; }
+        .pkg-header { display: flex; align-items: center; gap: 15px; }
+        .pkg-card input[type="checkbox"] { transform: scale(1.8); cursor: pointer; accent-color: var(--kesariya); }
+        
+        .details-text { font-size: 14px; color: #ddd; display: none; margin-top: 10px; border-top: 1px solid #555; padding-top: 10px; line-height: 1.5; }
+        .hidden { display: none !important; }
+        .big-text { font-size: 2.5em; color: var(--gold); font-weight: bold; }
+        .price-tag { font-size: 1.1em; color: var(--gold); font-weight: bold; margin-left: auto; }
+        
+        /* रिफंड नोट के लिए स्टाइल */
+        .refund-note { font-size: 11px; color: #ff9999; margin-top: 15px; line-height: 1.4; opacity: 0.8; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <section id="sec-login" class="page" style="background-image: url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200');">
+        <div class="overlay"></div>
+        <div class="content glass-card">
+            <h1 style="color:var(--gold)">ॐ Joshimath Darshan</h1>
+            <p>Devbhoomi Yatra Sewa - Dev Bhai</p>
+            
+            <input type="text" id="uName" placeholder="Apna Naam">
+            <input type="number" id="uPhone" placeholder="WhatsApp Mobile Number">
+            <button class="btn-main" onclick="generateAndSendOTP()">OTP Send Karein</button>
+            
+            <button class="btn-share" onclick="shareWebsite()">🔗 Share Website</button>
+        </div>
+    </section>
+
+    <!-- 2. OTP SCREEN -->
+    <section id="sec-otp" class="page hidden" style="background-image: url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200');">
+        <div class="overlay"></div>
+        <div class="content glass-card">
+            <h2 style="color:var(--gold)">Phone Verification</h2>
+            <p style="color: #eee;">Aapke number par WhatsApp ke jariye code bheja gaya hai.</p>
+            <p style="color: #FF8C00; font-size: 0.9em;">⚠️ Apna WhatsApp check karein aur vahan aaya code yahan dalein.</p>
+            
+            <input type="number" id="userOTP" placeholder="Enter 4-Digit OTP Here">
+            <button class="btn-main" style="background: linear-gradient(45deg, #4CAF50, #2E7D32);" onclick="verifyOTP()">Verify & Continue</button>
+            <button class="btn-main" style="background: #555; font-size: 0.9em; margin-top: 15px; padding: 8px;" onclick="backToLogin()">⬅️ Change Number</button>
+        </div>
+    </section>
+
+    <!-- 3. PACKAGES -->
+    <section id="sec-pkg" class="page hidden" style="background-image: url('https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200'); overflow-y: auto;">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="transport-note">⚠️ Note: Transport ka kharchha yatriyo ka hoga.</div>
+            <h2 style="color:var(--gold)">Seva Chunein (Multiple Select Karein)</h2>
+            
+            <div id="package-list">
+                <div class="pkg-card">
+                    <div class="pkg-header">
+                        <input type="checkbox" class="pkg-check" value="Standard (₹1100)">
+                        <div><b>Standard Yatra</b><br><small>400 mtrs</small></div>
+                        <span class="price-tag">₹1100</span>
+                    </div>
+                    <button onclick="toggleDetails('d1')" style="background:none; border:none; color:var(--gold); cursor:pointer; padding: 5px 0;">[View Details]</button>
+                    <div id="d1" class="details-text">Jyotrimath, Narsingh Mandir, Bhavishya Kedar, Shankrachariya Tapathsthali Gufa, Amar Kalpvriksha.</div>
+                </div>
+
+                <div class="pkg-card">
+                    <div class="pkg-header">
+                        <input type="checkbox" class="pkg-check" value="Deluxe (₹2100)">
+                        <div><b>Deluxe Yatra</b><br><small>6.4 km</small></div>
+                        <span class="price-tag">₹2100</span>
+                    </div>
+                    <button onclick="toggleDetails('d2')" style="background:none; border:none; color:var(--gold); cursor:pointer;">[View Details]</button>
+                    <div id="d2" class="details-text">Standard Package ki sari jagah + Gadi Mandir darshan.</div>
+                </div>
+
+                <div class="pkg-card">
+                    <div class="pkg-header">
+                        <input type="checkbox" class="pkg-check" value="Bhavishya Badri Special (₹2500)">
+                        <div><b>Bhavishya Badri Special</b><br><small>28.4 km</small></div>
+                        <span class="price-tag">₹2500</span>
+                    </div>
+                    <button onclick="toggleDetails('d3')" style="background:none; border:none; color:var(--gold); cursor:pointer;">[View Details]</button>
+                    <div id="d3" class="details-text">Standard Package ki sari jagah + Bhavishya Badri darshan. (Note: Isme Gadi Mandir nahi hai).</div>
+                </div>
+
+                <div class="pkg-card" style="border: 1px solid cyan;">
+                    <div class="pkg-header">
+                        <input type="checkbox" class="pkg-check" value="Ultimate Package (₹3100)">
+                        <div><b>Ultimate Package</b><br><small>34.8 km</small></div>
+                        <span class="price-tag">₹3100</span>
+                    </div>
+                    <button onclick="toggleDetails('d4')" style="background:none; border:none; color:var(--gold); cursor:pointer;">[View Details]</button>
+                    <div id="d4" class="details-text">Sab kuch shamil hai: Teeno packages ki sari dharmik jagah, Gadi Mandir aur Bhavishya Badri.</div>
+                </div>
+
+                <div class="pkg-card" style="border: 2px solid var(--gold);">
+                    <div class="pkg-header">
+                        <input type="checkbox" class="pkg-check" value="Badrinath Dham (₹5100)">
+                        <div><b>Badrinath Dham</b><br><small>52 km</small></div>
+                        <span class="price-tag">₹5100</span>
+                    </div>
+                    <button onclick="toggleDetails('d5')" style="background:none; border:none; color:var(--gold); cursor:pointer;">[View Details]</button>
+                    <div id="d5" class="details-text">Pandukeshwar (Yog Dhyan Badri, Kuber Ji), Hanuman Chatti, Mana Gaon (Bhim Pul, Ved Vyas Gufa, Saraswati Mandir, Ganesh Gufa).</div>
+                </div>
+
+                <div class="pkg-card" style="background: rgba(33, 150, 243, 0.2);">
+                    <div class="pkg-header">
+                        <input type="checkbox" class="pkg-check" value="Hotel Booking">
+                        <div><b>Hotel Booking</b><br><small>Joshimath/Badrinath</small></div>
+                        <span class="price-tag" style="font-size: 0.8em;">Contact for Price List</span>
+                    </div>
+                </div>
+
+                <div class="pkg-card" style="background: rgba(103, 58, 183, 0.2);">
+                    <div class="pkg-header">
+                        <input type="checkbox" class="pkg-check" value="Car Booking">
+                        <div><b>Car Booking</b><br><small>Booking Available</small></div>
+                        <span class="price-tag" style="font-size: 0.8em;">Contact for Price List</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-main" onclick="validateAndGo()">Aage Badhein</button>
+        </div>
+    </section>
+
+    <!-- 4. DATE -->
+    <section id="sec-date" class="page hidden" style="background:#222;">
+        <div class="content glass-card">
+            <h3>Yatra ki Tarikh (Date) Chunein</h3>
+            <input type="date" id="travelDate">
+            <button class="btn-main" onclick="showCongrats()">Next</button>
+        </div>
+    </section>
+
+    <!-- 5. CONGRATS -->
+    <section id="sec-congrats" class="page hidden" style="background:#111;">
+        <div class="content glass-card">
+            <div class="big-text">Congratulations!</div>
+            <p>Confirm your booking with Guide</p>
+            <button class="btn-main" onclick="showCashInfo()">Next</button>
+        </div>
+    </section>
+
+    <!-- 6. PAYMENT INFO SCREEN (नॉन-रिफंडेबल पॉलिसी के साथ) -->
+    <section id="sec-cash" class="page hidden" style="background:#000;">
+        <div class="content glass-card">
+            <h1 style="color:var(--gold); font-size: 2.2em; line-height: 1.2;">Pay 50% Advance Before Trip</h1>
+            <p style="color: #ddd; margin-top: 15px; margin-bottom: 5px;">Remaining cash payment to guide after service.</p>
+            
+            <!-- यहाँ रिफंड न होने की चेतावनी जोड़ी गई है -->
+            <div class="refund-note">
+                *Note: The 50% advance payment is non-refundable. If you cancel your booking, no refund will be provided.
+            </div>
+            
+            <button class="btn-main" style="margin-top: 25px;" onclick="sendToWhatsApp()">Confirm on WhatsApp</button>
+        </div>
+    </section>
+
+    <!-- 7. THANKS -->
+    <section id="sec-thanks" class="page hidden" style="background:#000;">
+        <div class="content">
+            <h1 class="big-text">Thank You!</h1>
+            <p style="font-size: 1.5em; color: var(--gold);">आपकी यात्रा मंगलमय हो</p>
+            <button class="btn-main" onclick="location.reload()">Home Page</button>
+        </div>
+    </section>
+
+    <script>
+        let cName, cPhone, selectedServices = [], cDate;
+        let generatedOTP;
+
+        function toggleDetails(id) {
+            let el = document.getElementById(id);
+            el.style.display = (el.style.display === "block") ? "none" : "block";
+        }
+
+        function generateAndSendOTP() {
+            cName = document.getElementById('uName').value;
+            cPhone = document.getElementById('uPhone').value;
+            
+            if(!cName || !cPhone) return alert("Naam aur Number bharein!");
+            if(cPhone.length < 10) return alert("Kripya sahi 10-digit mobile number dalein!");
+
+            generatedOTP = Math.floor(1000 + Math.random() * 9000);
+            
+            let otpMsg = `Hello Dev Bhai! Mera naam ${cName} hai. Mera OTP code ye hai: *${generatedOTP}*`;
+            
+            document.getElementById('sec-login').classList.add('hidden');
+            document.getElementById('sec-otp').classList.remove('hidden');
+            
+            window.open(`https://wa.me/919719894334?text=${otpMsg}`, '_blank');
+        }
+
+        function verifyOTP() {
+            let enteredOTP = document.getElementById('userOTP').value;
+            
+            if(!enteredOTP) return alert("Kripya OTP dalein!");
+            
+            if(parseInt(enteredOTP) === generatedOTP) {
+                alert("Verification Successful! 👍");
+                
+                let data = JSON.parse(localStorage.getItem('leads') || "[]");
+                data.push({
+                    name: cName, 
+                    phone: cPhone, 
+                    time: new Date().toLocaleString()
+                });
+                localStorage.setItem('leads', JSON.stringify(data));
+                
+                document.getElementById('sec-otp').classList.add('hidden');
+                document.getElementById('sec-pkg').classList.remove('hidden');
+            } else {
+                alert("Galat OTP! Kripya sahi 4-digit code dalein.");
+            }
+        }
+
+        function backToLogin() {
+            document.getElementById('sec-otp').classList.add('hidden');
+            document.getElementById('sec-login').classList.remove('hidden');
+        }
+
+        function validateAndGo() {
+            let checks = document.querySelectorAll('.pkg-check:checked');
+            if(checks.length === 0) return alert("Kam se kam ek seva chunein!");
+            selectedServices = Array.from(checks).map(cb => cb.value);
+            document.getElementById('sec-pkg').classList.add('hidden');
+            document.getElementById('sec-date').classList.remove('hidden');
+        }
+
+        function showCongrats() {
+            cDate = document.getElementById('travelDate').value;
+            if(!cDate) return alert("Date chunein!");
+            document.getElementById('sec-date').classList.add('hidden');
+            document.getElementById('sec-congrats').classList.remove('hidden');
+        }
+
+        function showCashInfo() {
+            document.getElementById('sec-congrats').classList.add('hidden');
+            document.getElementById('sec-cash').classList.remove('hidden');
+        }
+
+        function sendToWhatsApp() {
+            let myNumber = "919719894334";
+            let servicesText = selectedServices.join(", ");
+            let msg = `Pranam Dev Bhai!%0ABooking Confirm%0A*Naam:* ${cName}%0A*Phone:* ${cPhone}%0A*Services:* ${servicesText}%0A*Date:* ${cDate}%0A*Payment:* 50% Advance (Non-Refundable)`;
+            window.open(`https://wa.me/${myNumber}?text=${msg}`, '_blank');
+            setTimeout(() => {
+                document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+                document.getElementById('sec-thanks').classList.remove('hidden');
+            }, 1500);
+        }
+
+        function shareWebsite() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Joshimath-Badrinath Yatra',
+                    text: 'Devbhoomi Yatra Sewa - Dev Bhai के साथ अपनी यात्रा बुक करें।',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Website Link copy ho gaya hai! Aap ise WhatsApp par share kar sakte hain.");
+            }
+        }
+    </script>
+</body>
+</html>
